@@ -264,14 +264,164 @@ class Prod:
 уузнал как можно вручную итерировать объекты
 итерация, проверка членства и срезы взаимосвязаны между собой
 использование генераторов позволяет множественно итерировать объект
-можно сложение с права заменить обычным сложением
+можно сложение справа заменить обычным сложением
 В чем основные идеи:
 использовать магические методы для реализации специфического поведения класса объекта
 Как я могу применить изученное:
 
 Как новое вяжется с тем, что я уже знаю:
 стр 161
+
+13.12.2023
+Лутц Питон т2
+class Callback:
+	def __init__(self, color): # Функция информация о состоянии
+		self.color = color
+	def __call__(self): # Поддерживает вызовы без аргументов
+		print("turn", self.color)
+Запоминает состояние например кнопки при нажатии в Tkinter
+# Обработчики
+cbl = Callback('blue')
+ # Запомнить blue
+cb2 = Callback('green')
+ # Запомнить green
+Bl = Button(command=cbl)
+ # Зарегистрировать обработчики
+B2 = Button(command=cb2)
+
+
+__bool__, __len__
+если отсутсвует метод bool, то вызывает метод len
+используется при if и bool
+если не определены оба метода, то всегда True
+
+__del__
+обычно не используется, так как непредсказуемое поведение
+все удалится самим "сборщиком мусора"
+
+проектирование с использованием классов
+наследование
+class Employee:
+	def __init__(self, name, salary=0):
+		self.name = name
+		self.salary = salary
+	def giveRaise(self, percent):
+		self.salary = self.salary + (self.salary * percent)
+	def work(self):
+		print(self.name, "does stuff")  # делает что-то
+	def __repr__(self) :
+		return "<Employee: name=%s, salary=%s>" % (self.name, self.salary)
+
+class Chef(Employee):
+	def __init__(self, name):
+		Employee.__init__(self, name, 50000)
+	def work(self):
+		print(self.name, "makes food") # готовит еду
+
+class Server(Employee):
+	def __init__(self, name):
+		Employee.__init__(self, name, 40000)
+	def work(self):
+		print(self.name, "interfaces with customer") # взаимодействует
+													# с клиентом
+
+class PizzaRobot(Chef):
+	def __init__(self, name):
+		Chef.__init__(self, name)
+	def work(self):
+		print(self.name, "makes pizza")# готовит пиццу
+
+тестирвание
+bob = PizzaRobot('bob')
+print(bob)
+bob.work()
+bob.giveRaise(0.20)
+print(bob)
+
+композиция
+совокупность внедреннных объектов
+from employees import PizzaRobot, Server
+class Customer:
+	def __init__(self, name):
+		self.name = name
+	def order(self, server):
+		print(self.name, "orders from", server) # заказы от
+	def pay(self, server):
+		print(self.name, "pays for item to", server) # плата за единицу
+
+class Oven:
+	def bake(self):
+		print("oven bakes") # духовой шкаф выпекает
+
+class PizzaShop:
+	def __init__(self):
+		self.server = Server("Pat") # Внедрить другие объекты
+		self.chef = PizzaRobot("Bob") # Робот по имени bob
+		self.oven = Oven()
+	def order(self, name):
+		customer = Customer(name) # Активизировать другие объекты
+		customer.order(self.server)	# Заказы клиента, принятые официантом
+		self.chef.work()
+		self.oven.bake()
+		customer.pay(self.server)
+
+тестирование
+scene = PizzaShop() # Создать составной объект
+scene.order(’Homer') # Эмулировать заказ клиента Homer
+print(’...’)
+scene.order('Shaggy') # Эмулировать заказ клиента Shaggy
+
+модуль pickle используется при сохранения данных и логики класса
+
+делегирование: промежуточные объекты-оболочки
+ведение журналов, проверка доступа, дополнительные шаги к интерфейсам
+
+чтобы избежать конфликта имен принято использовать __(псевдозакрытые атрибуты)
+__<атрибут или метод>
+в питоне 3 вида метода уровня класса: методы экземпляра, статические методы(staticmethod), методы класса
+
+проектирование функций , которые генерируют произвольные виды объектов нахывается фабрикой
+def factory(aClass, *pargs, **kargs) : # Кортеж или словарь с переменным
+										# количеством аргументов
+	return aClass(*pargs, **kargs) # Вызывает aClass (или apply в Python 2.X)
+
+class Spam:
+	def doit(self, message):
+		print(message)
+
+class Person:
+	def __ init__(self, name, job=None):
+		self, name = name
+		self. job = job
+
+objectl = factory(Spam)
+ # Создать объект Spam
+object2 = factory (Person, "Arthur", "King")
+ # Создать объект Person
+objects = factory (Person, name= 'Brian')
+ # Тоже самое, с ключевым аргументом и стандартным значением
+стр193
+
+Резюме:
+узнал о патернах программирования: наследование(в каждом классе прописывается своя логика, "является"),
+композиция(есть сборный класс, где все классы собираются и выполняют логику), делегирование(прописывается
+отдельно проверки и тп), фабрика(одна функция генерирует создание объекта)
+В чем основные идеи: в проектировании программы
+Как я могу применить изученное: можно создать прогу согласно какому-нибудь паттерну
+Как новое вяжется с тем, что я уже знаю: так создаются фреймворки
+
+
+
+
+
+
+
+
 Резюме:
 В чем основные идеи:
 Как я могу применить изученное:
 Как новое вяжется с тем, что я уже знаю:
+
+
+
+
